@@ -1,4 +1,4 @@
-'''Modify this file, especially move(), to play Gridmaus by script.'''
+'''Modify this file, especially move(), to play Zoom Mouse by script.'''
 
 from collections import namedtuple
 from random import choice # needed only for sample code
