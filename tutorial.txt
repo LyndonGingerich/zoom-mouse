@@ -1,0 +1,19 @@
+You must now navigate blindly to find the food you can smell.
+
+The game difficulty is decided by two settings:
+1. The size of the space in which you must navigate.
+2. The number of dimensions through which you must navigate.
+
+For each dimension, you will enter "+" to go forward, "-" to go back, or nothing to hold still.
+
+Your velocity readout is very important:
+If it is positive, you last moved toward the goal;
+if it is negative, you moved away from the goal,
+if it is 0, you stayed the same distance from the goal.
+
+To start, try looking in one direction at a time.
+In dimension 0, figure out whether moving forward or back gives you a positive velocity.
+(Just hold still in the other dimensions for now.)
+Move in that direction until your velocity goes negative, then go back one.
+
+Do the same thing in each dimension. You will soon find your goal!
