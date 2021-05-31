@@ -44,7 +44,7 @@ class Game:
 
     def move_player(self, movement):
         '''Where the action happens'''
-        self.player_location = tuple(map(sum, zip(self.player_location, movement)))
+        self.player_location = tuple(map(lambda x, y: x + y, self.player_location, movement))
 
 def eat_food():
     '''Victory message'''
@@ -111,7 +111,7 @@ def run_game(demo=True):
         to_position = game.player_location
         abs_difference = lambda x, y: abs(x - y)
         abs_difference_of_tuple = lambda x: abs_difference(*x)
-        distance = lambda address1, address2: hypot(*map(abs_difference_of_tuple, zip(address1, address2)))
+        distance = lambda address1, address2: hypot(*map(abs_difference, address1, address2))
         get_velocity = (
             lambda goal, from_address, to_address:
             distance(from_address, goal) - distance(to_address, goal)
