@@ -9,7 +9,6 @@ import script
 
 
 DIVIDER = '-' * get_terminal_size()[0]
-MOVEMENT_OPERATORS = {'+': 1, '-': -1, '': 0}
 
 class Game:
     '''Handles in-game abstractions'''
@@ -27,24 +26,33 @@ class Game:
     def get_movement(self, velocity):
         '''Retrieves movement data from the player'''
         def demo_movement():
-            def get_operator_input(dimension):
-                return validate_input(
+            def get_movement_input(dimension):
+                return int(validate_input(
                     message=f'Movement in dimension {dimension}: ',
-                    condition=lambda x: x in MOVEMENT_OPERATORS.keys(),
-                    failure_message='Please enter "+", "-", or nothing at all.'
-                )
+                    condition=converts_to_int,
+                    failure_message='Please enter a valid integer.'
+                ))
 
             print(DIVIDER)
             print('Coordinates:', self.player_location)
             print('Current velocity:', str(velocity))
-            return map(get_operator_input, self.dimension_range)
+            return map(get_movement_input, self.dimension_range)
 
         movement = demo_movement() if self.demo else script.move(velocity)
-        return map(lambda x: MOVEMENT_OPERATORS[x], movement)
+        return movement
 
     def move_player(self, movement):
         '''Where the action happens'''
         self.player_location = tuple(map(lambda x, y: x + y, self.player_location, movement))
+
+def converts_to_int(check_string):
+    '''Checks whether a string can be converted to an int'''
+    try:
+        int(check_string)
+    except ValueError:
+        return False
+    else:
+        return True
 
 def eat_food():
     '''Victory message'''
@@ -54,37 +62,29 @@ def eat_food():
     food = food.rstrip('\n')
     print(f'The mouse finds {food} and scarfs it down. Good job!')
 
-def get_bool_input(message):
-    '''Gets boolean input from the terminal'''
-    values = {'y': True, 'yes': True, 'n': False, 'no': False, '': False}
-    return values[validate_input(
-        message=message,
-        condition = lambda x: x in values,
-        failure_message='Please enter input that can be parsed as "yes" or "no".'
-    )]
-
-def get_int_input(message):
-    '''Gets an integer input from the terminal'''
-    def converts_to_int(check_string):
-        try:
-            int(check_string)
-        except ValueError:
-            return False
-        else:
-            return True
-
-    return int(validate_input(
-        message=message,
-        condition=lambda x: converts_to_int(x) and int(x) > 0,
-        failure_message='Please enter a positive integer.'
-    ))
-
 def get_game_details(demo):
     '''Defines the size and dimension of the game by user input'''
     def demo_game_details():
         '''Uses get_int_input to get game details from the user'''
+        def get_bool_input(message):
+            '''Gets boolean input from the terminal'''
+            values = {'y': True, 'yes': True, 'n': False, 'no': False, '': False}
+            return values[validate_input(
+                message=message,
+                condition = lambda x: x in values,
+                failure_message='Please enter input that can be parsed as "yes" or "no".'
+            )]
+
         def succinct_game_details():
-            return map(get_int_input, (
+            def get_positive_int_input(message):
+                '''Gets an integer input from the terminal'''
+                return int(validate_input(
+                    message=message,
+                    condition=lambda x: converts_to_int(x) and int(x) > 0,
+                    failure_message='Please enter a positive integer.'
+                ))
+
+            return map(get_positive_int_input, (
                 'How many units long would you like this game to be in each dimension? ',
                 'In how many dimensions would you like to play? '
             ))
@@ -110,7 +110,6 @@ def run_game(demo=True):
         velocity = moves = 0
         to_position = game.player_location
         abs_difference = lambda x, y: abs(x - y)
-        abs_difference_of_tuple = lambda x: abs_difference(*x)
         distance = lambda address1, address2: hypot(*map(abs_difference, address1, address2))
         get_velocity = (
             lambda goal, from_address, to_address:
